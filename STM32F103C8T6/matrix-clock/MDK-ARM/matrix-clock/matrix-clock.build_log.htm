@@ -1,0 +1,99 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.37.0.0
+Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Jingxin Gao, Fs, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.37.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.18
+Assembler:       Armasm.exe V6.18
+Linker/Locator:  ArmLink.exe V6.18
+Library Manager: ArmAr.exe V6.18
+Hex Converter:   FromElf.exe V6.18
+CPU DLL:         SARMCM3.DLL V5.37.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      CMSIS_AGDI.dll V1.33.12.0
+Dialog DLL:      TCM.DLL V1.56.1.0
+ 
+<h2>Project:</h2>
+C:\st-projects\matrix-clock\MDK-ARM\matrix-clock.uvprojx
+Project File Date:  10/12/2022
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.18', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
+Rebuild target 'matrix-clock'
+compiling main.c...
+../Src/main.c(188): warning: incompatible pointer types passing 'uint8_t (*)[1024]' (aka 'unsigned char (*)[1024]') to parameter of type 'uint8_t *' (aka 'unsigned char *') [-Wincompatible-pointer-types]
+            uart_callback(&uart_buff, uart_buff_len);
+                          ^~~~~~~~~~
+../Src/main.c(93): note: passing argument to parameter 'uart_buff' here
+void uart_callback(uint8_t *uart_buff, uint8_t size)
+                            ^
+../Src/main.c(201): warning: incompatible pointer types passing 'uint8_t (*)[1024]' (aka 'unsigned char (*)[1024]') to parameter of type 'uint8_t *' (aka 'unsigned char *') [-Wincompatible-pointer-types]
+                    uart_callback(&uart_buff, uart_buff_len);
+                                  ^~~~~~~~~~
+../Src/main.c(93): note: passing argument to parameter 'uart_buff' here
+void uart_callback(uint8_t *uart_buff, uint8_t size)
+                            ^
+2 warnings generated.
+compiling stm32f1xx_it.c...
+compiling stm32f1xx_hal_msp.c...
+assembling startup_stm32f103xb.s...
+compiling stm32f1xx_hal_gpio_ex.c...
+compiling stm32f1xx_hal_adc.c...
+compiling stm32f1xx_hal_adc_ex.c...
+compiling stm32f1xx_hal.c...
+compiling stm32f1xx_hal_rcc.c...
+compiling stm32f1xx_hal_rcc_ex.c...
+compiling stm32f1xx_hal_gpio.c...
+compiling stm32f1xx_hal_dma.c...
+compiling stm32f1xx_hal_cortex.c...
+compiling stm32f1xx_hal_pwr.c...
+compiling stm32f1xx_hal_flash.c...
+compiling stm32f1xx_hal_flash_ex.c...
+compiling stm32f1xx_hal_exti.c...
+compiling stm32f1xx_hal_spi.c...
+compiling stm32f1xx_hal_tim.c...
+compiling stm32f1xx_hal_tim_ex.c...
+compiling stm32f1xx_hal_uart.c...
+compiling system_stm32f1xx.c...
+compiling led_screen.c...
+compiling simple_gl.c...
+compiling utils.c...
+compiling digital_clock.c...
+compiling fireworks.c...
+linking...
+Program Size: Code=15942 RO-data=482 RW-data=1344 ZI-data=18752  
+FromELF: creating hex file...
+"matrix-clock\matrix-clock.axf" - 0 Error(s), 2 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.CS32F1xx_DFP.1.0.0.pack
+                Keil.CS32F1xx_DFP.1.0.0
+                CKS CS32F1 Series Device Support, Drivers
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_matrix-clock
+  C:/Users/gaojingxin/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
+  C:/Users/gaojingxin/AppData/Local/Arm/Packs/Keil/CS32F1xx_DFP/1.0.0/Device/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.6.0
+Build Time Elapsed:  00:00:08
+</pre>
+</body>
+</html>

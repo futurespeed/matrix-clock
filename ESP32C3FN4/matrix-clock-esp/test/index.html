@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <title>Matrix Clock</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            /* overflow: hidden;
+            width: 100%;
+            height: 100%; */
+        }
+        div.head{
+            background-color: #333;
+            color: #fff;
+            font-size: 2em;
+            padding: 0.5em;
+        }
+        div.panel div.title{
+            border-top: 1px dotted #fff;
+            background-color: #666;
+            color: #fff;
+            padding-left: 10px;
+        }
+        div.panel div.content{
+            display: none;
+            padding: 10px;
+        }
+
+        div.panel div.content span.label{
+            display: inline-block;
+            width: 5em;
+        }
+        div.panel div.content select{
+            width: 10em;
+        }
+        div.panel div.content input{
+            width: 10em;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function (event) {
+            const modeConfig = [
+                { "code": "0", "desc": "等待"},
+                { "code": "1", "desc": "时钟"},
+                { "code": "2", "desc": "动画"}
+            ]
+            const weatherMap = {'0':'--','1':'晴','2':'雨','3':'阴','4':'雪'}
+
+            const nvl = (data, replace) => {
+                return data ? data : replace ? replace : '--'
+            }
+
+            var baseHost = document.location.origin
+            const modeSel = document.getElementById('sel-mode')
+            const syncTimeButton = document.getElementById('btn-sync-time')
+            const getWeatherButton = document.getElementById('btn-get-weather')
+            const refreshButton = document.getElementById('btn-refresh')
+            const connectButton = document.getElementById('btn-connect')
+            const connectStateSpan = document.getElementById('spn-connect-state')
+            const wifiIpSpan = document.getElementById('spn-wifi-ip')
+            const temperatureStateSpan = document.getElementById('spn-temperature')
+            const weatherStateSpan = document.getElementById('spn-weather')
+            const syncTimeSpan = document.getElementById('spn-sync-time')
+            const lunarYearSpan = document.getElementById('spn-lunar-year')
+            const lunarMonthSpan = document.getElementById('spn-lunar-month')
+            const lunarDaySpan = document.getElementById('spn-lunar-day')
+            const iptBrightness = document.getElementById('ipt-brightness')
+            const iptSsid = document.getElementById('ipt-ssid')
+            const iptPasswd = document.getElementById('ipt-passwd')
+
+
+            const getStatus = () => {
+                console.log(`get status`)
+                const query = `${baseHost}/status`
+                fetch(query).then(response => response).then(resp=>resp.json()).then(data=>{
+                    var syncTime = '--'
+                    if(data['sync-time']){
+                        var time = new Date(data['sync-time'])
+                        syncTime = `${time.getFullYear()}-${time.getMonth()+1}-${time.getDate()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
+                    }
+
+                    modeSel.value = '' + data['mode']
+                    connectStateSpan.innerHTML = data['wifi-state'] ? '已连接' : '未连接'
+                    wifiIpSpan.innerHTML = nvl(data['wifi-ip']);
+                    iptSsid.value = data['wifi-ssid'];
+                    iptPasswd.value = data['wifi-passwd']
+                    iptBrightness.value = data['brightness']
+                    temperatureStateSpan.innerHTML = '' + nvl(data['temperature'])
+                    weatherStateSpan.innerHTML = nvl(weatherMap['' + data['weather']])
+                    syncTimeSpan.innerHTML = syncTime
+                    lunarYearSpan.innerHTML = nvl(data['lunar-year'])
+                    lunarMonthSpan.innerHTML = nvl(data['lunar-month'])
+                    lunarDaySpan.innerHTML = nvl(data['lunar-day'])
+                })
+            }
+
+            const sendCmd = (code, value) => {
+                console.log(`send cmd: ${code}=${value}`)
+                const query = `${baseHost}/control?var=${code}&val=${value}`
+                fetch(query).then(response => {
+                    console.log(`request to ${query} finished, status: ${response.status}`)
+                    getStatus()
+                })
+            }
+
+            const connectWifi = () => {
+                console.log(`connect wifi`)
+                const query = `${baseHost}/connect?ssid=${iptSsid.value}&passwd=${iptPasswd.value}`
+                fetch(query).then(response => {
+                    console.log(`request to ${query} finished, status: ${response.status}`)
+                    getStatus()
+                })
+            }
+
+            const panelClick = (e) => {
+                document.querySelectorAll("div.panel").forEach(e=> e.children[1].style.display = 'none')
+                e.currentTarget.children[1].style.display = 'block'
+            }
+
+            
+            syncTimeButton.addEventListener('click', () => sendCmd("sync-time", "1"))
+            getWeatherButton.addEventListener('click', () => sendCmd("get-weather", "1"))
+            refreshButton.addEventListener('click', () => getStatus())
+            connectButton.addEventListener('click', connectWifi)
+            modeSel.addEventListener('change', () => sendCmd("mode", modeSel.value))
+
+            
+            var modeOpsStr = '';
+            modeConfig.forEach(e => modeOpsStr += `<option value="${e.code}">${e.desc}</option>`)
+            modeSel.innerHTML = modeOpsStr
+            modeSel.value = '1'
+
+            document.querySelectorAll('div.panel').forEach(e=> e.addEventListener('click', panelClick))
+            document.getElementById('pnl-control').children[1].style.display = 'block'
+
+            getStatus()
+        })
+    </script>
+</head>
+
+<body>
+    <div>
+        <div class="head">Matrix Clock</div>
+        <div class="panel" id="pnl-control">
+            <div class="title">控制面板</div>
+            <div class="content">
+                <p><span class="label">显示模式</span><select id="sel-mode"></select></p>
+                <p><span class="label">显示亮度</span><input type="text" id="ipt-brightness"/></p>
+                <p><span class="label">同步时间</span><span id="spn-sync-time">--</span></p>
+                <p><span class="label">农历</span><span id="spn-lunar-year">--</span>年<span id="spn-lunar-month">--</span>月<span id="spn-lunar-day">--</span>日</p>
+                <p><span class="label">温度</span><span id="spn-temperature">--</span></p>
+                <p><span class="label">天气</span><span id="spn-weather">--</span></p>
+                <p><button id="btn-sync-time">同步时间</button>&nbsp;&nbsp;<button id="btn-get-weather">获取天气</button></p>
+            </div>
+        </div>
+        <div class="panel" id="pnl-wifi">
+            <div class="title">WIFI连接</div>
+            <div class="content">
+                <p><span class="label">连接状态</span><span id="spn-connect-state">--</span></p>
+                <p><span class="label">IP地址</span><span id="spn-wifi-ip">--</span></p>
+                <p><span class="label">SSID</span><input type="text" id="ipt-ssid" /></p>
+                <p><span class="label">密码</span><input type="text" id="ipt-passwd" /></p>
+                <p><button id="btn-refresh">刷新</button>&nbsp;&nbsp;<button id="btn-connect">连接</button></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
